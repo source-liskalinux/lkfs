@@ -144,9 +144,9 @@ impl Lkfs {
 
 fn print_usage() {
     println!("");
-    println!("----------------------------------------");
-    println!("::: [ Liska Filesystem Tool (lkfs) ] :::");
-    println!("----------------------------------------");
+    println!("--------------------------------------------");
+    println!("::: [ Liska Filesystem Tool (v1.0.0-1) ] :::");
+    println!("--------------------------------------------");
     println!("");
     println!("Usage: lkfs <fstype> [partition] [command]");
     println!("> -l | --label <name>    set filesystem label");
