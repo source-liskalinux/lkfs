@@ -13,12 +13,12 @@ depends=('e2fsprogs' 'dosfstools' 'util-linux' 'btrfs-progs' 'f2fs-tools' 'xfspr
 makedepends=('rust')
 
 build() {
-    echo "--> [BUILD] Compiling...."
+    echo "--> [BUILD] Compiling lkfs...."
     cargo build --release
 }
 
 package() {
     echo "--> [INSTALL] Installing lkfs...."
     install -d "${pkgdir}/usr/bin"
-    install -Dm755 "${srcdir}/../target/release/lkfs" "${pkgdir}/usr/bin/lkfs"
+    install -Dm755 "./target/release/lkfs" "${pkgdir}/usr/bin/lkfs"
 }

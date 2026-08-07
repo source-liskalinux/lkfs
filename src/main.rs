@@ -2,15 +2,11 @@ use std::env;
 use std::path::{Path, PathBuf};
 use std::process::{Command, exit};
 use std::str::FromStr;
+use colored::Colorize;
 
-const CYAN: &str = "\x1b[36m";
-const GREEN: &str = "\x1b[92m";
-const RED: &str = "\x1b[31m";
-const RESET: &str = "\x1b[0m";
-
-fn print_info(msg: &str) { println!("{}[i]{} {}", CYAN, RESET, msg); }
-fn print_success(msg: &str) { println!("{}[+]{} {}{}{}", CYAN, RESET, GREEN, msg, RESET); }
-fn print_error(msg: &str) { eprintln!("{}[-]{} {}{}{}", CYAN, RESET, RED, msg, RESET); }
+fn info(msg: &str) { println!("{} {}", "[i]".bright_cyan(), msg); }
+fn success(msg: &str) { println!("{} {}", "[✓]".bright_green(), msg.bright_green()); }
+fn error(msg: &str) { eprintln!("{} {}", "[✗]".bright_red(), msg.bright_red()); }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FsType {
@@ -128,8 +124,8 @@ impl Lkfs {
             }
         };
         args.push(self.device.to_string_lossy().to_string());
-        print_info("Starting the operation....");
-        print_info(&format!("Selected filesystem: {} {}", binary, args.join(" ")));
+        info("Starting the operation....");
+        info(&format!("Selected filesystem: {} {}", binary, args.join(" ")));
         let status = Command::new(binary)
             .args(&args)
             .status()
@@ -144,9 +140,9 @@ impl Lkfs {
 
 fn print_usage() {
     println!("");
-    println!("--------------------------------------------");
-    println!("::: [ Liska Filesystem Tool (v1.0.0-1) ] :::");
-    println!("--------------------------------------------");
+    println!("-----------------------------------------");
+    println!("::: [ Liska Filesystem Tool (1.0.0) ] :::");
+    println!("-----------------------------------------");
     println!("");
     println!("Usage: lkfs <fstype> [partition] [command]");
     println!("> -l | --label <name>    set filesystem label");
@@ -163,7 +159,7 @@ fn main() {
     let fs_type = match FsType::from_str(&args[1]) {
         Ok(t) => t,
         Err(e) => {
-            print_error(&e);
+            error(&e);
             exit(1);
         }
     };
@@ -185,11 +181,11 @@ fn main() {
         }
         i += 1;
     }
-    print_info(&format!("Formatting {} as {:?}...", device, fs_type));
+    info(&format!("Formatting {} as {:?}...", device, fs_type));
     match lkfs.execute() {
-        Ok(_) => print_success("Operation completed successfully!"),
+        Ok(_) => success("Operation completed successfully!"),
         Err(e) => {
-            print_error(&e);
+            error(&e);
             exit(1);
         }
     }
