@@ -8,6 +8,13 @@ fn info(msg: &str) { println!("{} {}", "[i]".bright_cyan(), msg); }
 fn success(msg: &str) { println!("{} {}", "[✓]".bright_green(), msg.bright_green()); }
 fn error(msg: &str) { eprintln!("{} {}", "[✗]".bright_red(), msg.bright_red()); }
 
+fn require_root() {
+    if unsafe { libc::geteuid() } != 0 {
+        error("Root permission required. Use 'sudo' for this operation!");
+        exit(1);
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FsType {
     Ext2,
@@ -156,6 +163,7 @@ fn main() {
         print_usage();
         exit(0);
     }
+    require_root();
     let fs_type = match FsType::from_str(&args[1]) {
         Ok(t) => t,
         Err(e) => {
