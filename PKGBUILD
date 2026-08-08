@@ -8,6 +8,7 @@ pkgver=1.0.0
 pkgrel=1
 pkgdesc="Liska Linux Centralized Filesystem Formatter and Swap Utility"
 arch=('x86_64')
+url="https://github.com/source-liskalinux/lkfs"
 license=('GPL-3.0-or-later')
 depends=('e2fsprogs' 'dosfstools' 'util-linux' 'btrfs-progs' 'f2fs-tools' 'xfsprogs' 'ntfs-3g')
 makedepends=('rust')
