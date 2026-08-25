@@ -9,8 +9,8 @@ fn success(msg: &str) { println!("{} {}", "[✓]".bright_green(), msg.bright_gre
 fn error(msg: &str) { eprintln!("{} {}", "[✗]".bright_red(), msg.bright_red()); }
 
 fn require_root() {
-    if unsafe { libc::geteuid() } != 0 {
-        error("Root permission required. Use 'sudo' for this operation!");
+    if unsafe { libc::getuid() } != 0 {
+        error("Operation not permitted (os error 1)!");
         exit(1);
     }
 }
@@ -41,7 +41,7 @@ impl FromStr for FsType {
             "xfs" => Ok(FsType::Xfs),
             "f2fs" => Ok(FsType::F2fs),
             "swap" => Ok(FsType::Swap),
-            _ => Err(format!("Unsupported filesystem type: '{}'", s)),
+            _ => Err(format!("Unsupported filesystem type: {}", s)),
         }
     }
 }
@@ -64,7 +64,7 @@ impl Lkfs {
     }
     pub fn execute(&self) -> Result<(), String> {
         if !self.device.exists() {
-            return Err(format!("Device '{:?}' does not exist!", self.device));
+            return Err(format!("Device {:?} does not exist!", self.device));
         }
         let (binary, mut args) = match self.fs_type {
             FsType::Ext2 | FsType::Ext3 | FsType::Ext4 => {
@@ -136,7 +136,7 @@ impl Lkfs {
         let status = Command::new(binary)
             .args(&args)
             .status()
-            .map_err(|e| format!("Failed to run '{}'. Is the dependencies installed? Error message: {}", binary, e))?;
+            .map_err(|e| format!("Failed to run {}. Is the dependencies installed? Err: {}.", binary, e))?;
         if status.success() {
             Ok(())
         } else {
@@ -147,13 +147,23 @@ impl Lkfs {
 
 fn print_usage() {
     println!("");
-    println!("-----------------------------------------");
-    println!("::: [ Liska Filesystem Tool (1.0.0) ] :::");
-    println!("-----------------------------------------");
+    println!("-----------------------------------------------------");
+    println!("::: [ Liska Centralized Filesystem Tool (1.0.0) ] :::");
+    println!("-----------------------------------------------------");
     println!("");
-    println!("Usage: lkfs <fstype> [partition] [command]");
-    println!("> -l | --label <name>    set filesystem label");
-    println!("> -f | --force           force formatting filesystem (use with caution)");
+    println!("Usage: lkfs <fstype> [partition] <options>");
+    println!("> -l | --label <name>     set filesystem label");
+    println!("> -f | --force            force formatting filesystem (use with caution)");
+    println!("Supported filesystem type:");
+    println!("> ext2");
+    println!("> ext3");
+    println!("> ext4");
+    println!("> btrfs");
+    println!("> fat16");
+    println!("> fat32");
+    println!("> xfs");
+    println!("> f2fs");
+    println!("> swap");
     println!("");
 }
 
