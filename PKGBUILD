@@ -13,13 +13,19 @@ license=('GPL-3.0-or-later')
 depends=('e2fsprogs' 'dosfstools' 'util-linux' 'btrfs-progs' 'f2fs-tools' 'xfsprogs' 'ntfs-3g')
 makedepends=('rustup')
 
+prepare() {
+    cargo check --release --all-targets
+}
+
 build() {
-    echo "--> [BUILD] Compiling lkfs...."
     cargo build --release
 }
 
+check() {
+    cargo test --release
+}
+
 package() {
-    echo "--> [INSTALL] Installing lkfs...."
     install -d "${pkgdir}/usr/bin"
     install -Dm755 "./target/release/lkfs" "${pkgdir}/usr/bin/lkfs"
 }
